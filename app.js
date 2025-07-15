@@ -16,7 +16,7 @@ const User = require('./models/User');
 const seedDB = require('./seed')
 const MongoStore = require('connect-mongo');
 
-const dbURL = 'mongodb://127.0.0.1:27017/shopping-app';
+const dbURL = process.env.DBURL;
 
 mongoose.set('strictQuery', true);
 mongoose.connect(dbURL)
@@ -30,6 +30,8 @@ app.set('views', path.join(__dirname, 'views'));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.urlencoded({ extended: true }));
 app.use(methodOverride('_method'));
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 let secret = process.env.SECRET || 'weneedabettersecretkey';
 
@@ -81,6 +83,7 @@ const authRoutes = require('./routes/auth');
 const cartRoutes = require('./routes/cart');
 const productApi = require('./routes/api/productapi');
 const paymentRoutes = require('./routes/payment');
+const chatbotRoutes = require('./routes/chatbot');
 
 
 app.get('/' , (req,res)=>{
@@ -94,6 +97,8 @@ app.use(authRoutes);
 app.use(cartRoutes);
 app.use(productApi);
 app.use(paymentRoutes);
+app.use(chatbotRoutes);
+
 
 
 const port = 5000;

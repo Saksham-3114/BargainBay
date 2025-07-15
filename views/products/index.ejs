@@ -1,44 +1,110 @@
 <% layout('layouts/boilerplate') -%>
 
-<section class="container">
+<!-- Carousel Section
+<section class="deals-carousel mb-5">
+  <div class="carousel-track d-flex flex-nowrap overflow-auto py-4 px-2"
+       style="scroll-snap-type: x mandatory; gap: 1rem;">
+    <% const dealBanners = [
+      { img: '/images/deals/deal1.png', text: 'Mega Fashion Days 🔥' },
+      { img: '/images/deals/deal2.png', text: 'Tech Sale Bonanza 💡' },
+      { img: '/images/deals/deal3.png', text: 'Gen Z Essentials 🎧' },
+    ]; %>
+    <% dealBanners.forEach(deal => { %>
+      <div class="deal-item flex-shrink-0 position-relative top-0 rounded-4 overflow-hidden"
+           style="min-width: 90vw; scroll-snap-align: start; height: auto;">
+        <img src="<%= deal.img %>" class="w-100 h-100 object-fit-cover">
+        <div class="position-absolute inset-0 bg-black bg-opacity-30"></div>
+      </div>
+    <% }) %>
+  </div>
+</section> -->
 
-
-  <%- include('../partials/flash')  %> 
-  
-  <section id="heading"> 
-    <h4 class="display-4"><i class="fab fa-shopify" style="margin-right: 20px;"></i>Shopping-Cart</h4>
-  </section>
-  <div class="row products">
-      <%for(let product of products){%>
-          <div class="col-lg-3 col-md-6 mb-3">
-              <div class="card shadow-sm mx-auto position-relative" style="width: 20rem;">
-                  <img src="<%=product.img%>" class="card-img-top" alt="item image">
-                  <span class="badge rounded-pill bg-light text-dark w-25 position-absolute translate-middle-y" style="top:41%;left:5%"><%=product.avgRating%>  &star; | <%=product.reviews.length%></span>
-                  <div class="card-body">
-                    <h5 class="card-title d-flex justify-content-between align-items-center">
-                      <span><%= product.name %></span> 
-                      <span class="btn like-btn" product-id="<%=product._id%>">
-                        <% if(currentUser && currentUser.wishList.includes(product._id)){ %>
-                           <i class="fas fa-heart"></i>
-                          <% } else{ %>
-                            <i class="far fa-heart"></i>
-                        <% } %>
-                      </span>
-                    </h5>
-                    <p class="card-text fw-light"><%= product.desc%></p>
-                    <% if(product.reviews.length){ %>
-                      <p class="text-muted"><%=product.reviews.length%> reviews</p>
-                    <%}else{%>
-                      <p class="text-muted">No reviews</p>
-                    <% } %> 
-                    <h6 class="card-title"><span class="fw-lighter fs-6 text-decoration-line-through">Rs.<%= product.price*2 %></span> Rs.<%= product.price %> <span class="fw-light fs-6 text-warning">( 50 % OFF )</span> </h6>
-                    <a href="/products/<%=product._id%>" class="btn btn-sm show-btn">View Now</a>
-                  </div>
-              </div>
+<!-- Product Cards Section -->
+<section class="products-section container-fluid px-3">
+  <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 row-cols-xl-4 g-4">
+    <% for (let product of products) { %>
+      <div class="col">
+        <div class="card border-0 rounded-4 shadow-sm h-100 product-card">
+          <!-- Image -->
+          <div class="position-relative overflow-hidden rounded-top-4">
+            <img src="<%= product.img %>" class="w-100" style="height: 220px; object-fit: cover;">
+            <span class="badge bg-light text-dark position-absolute top-0 start-0 m-2 rounded-pill small">
+              ⭐ <%= product.avgRating %> · <%= product.reviews.length %>
+            </span>
           </div>
-      <%}%>
+
+          <!-- Body -->
+          <div class="card-body d-flex flex-column">
+            <div class="d-flex justify-content-between align-items-start mb-2">
+              <h6 class="fw-semibold text-truncate mb-0"><%= product.name %></h6>
+              <button type="button" class="btn btn-sm p-0 border-0 like-btn" data-id="<%= product._id %>">
+                <% if(currentUser && currentUser.wishList.includes(product._id)) { %>
+                  <i class="fas fa-heart text-danger"></i>
+                <% } else { %>
+                  <i class="far fa-heart text-muted"></i>
+                <% } %>
+              </button>
+            </div>
+
+            <p class="text-muted small mb-1 text-truncate"><%= product.desc %></p>
+            <p class="text-muted small mb-2"><%= product.reviews.length %> reviews</p>
+
+            <div class="mt-auto">
+              <span class="text-decoration-line-through text-muted me-1 small">Rs.<%= product.price * 2 %></span>
+              <span class="fw-bold text-dark fs-5">Rs.<%= product.price %></span>
+              <span class="badge bg-warning-subtle text-warning-emphasis ms-1">50% OFF</span>
+            </div>
+
+            <a href="/products/<%= product._id %>"
+               class="btn btn-outline-dark btn-sm rounded-pill mt-3 w-100">
+              👀 View Now
+            </a>
+          </div>
+        </div>
+      </div>
+    <% } %>
   </div>
 </section>
 
-
 <script src="/js/common.js"></script>
+
+<style>
+  :root {
+    --bg: #f8f9fa;
+    --card-bg: #ffffff;
+    --text: #212529;
+    --muted: #6c757d;
+    --accent: #0d6efd;
+    --shadow: 0 4px 12px rgba(0,0,0,.05);
+    --shadow-hover: 0 8px 24px rgba(0,0,0,.08);
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', system-ui, sans-serif;
+  }
+
+  /* Carousel */
+  .carousel-track::-webkit-scrollbar { display: none; }
+  .carousel-track { -ms-overflow-style: none; scrollbar-width: none; }
+
+  /* Cards */
+  .product-card {
+    transition: transform .25s, box-shadow .25s;
+  }
+  .product-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-hover);
+  }
+
+  .like-btn i { transition: transform .2s; }
+  .like-btn:hover i { transform: scale(1.2); }
+
+  /* Button */
+  .btn-outline-dark:hover {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #fff;
+  }
+</style>

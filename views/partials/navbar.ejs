@@ -1,38 +1,199 @@
-<nav class="navbar fixed-top navbar-expand-lg navbar-dark" style="background-color: #0077b6;">
-  <div class="container">
-    <a class="navbar-brand" href="/products"><i class="fas fa-shopping-basket" style="margin-right: 10px;font-size: 1.7rem;"></i>Shopping Cart</a>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarTogglerDemo02" aria-controls="navbarTogglerDemo02" aria-expanded="false" aria-label="Toggle navigation">
+<nav class="navbar fixed-top navbar-expand-lg navbar-dark" id="dynamicNavbar" style=" backdrop-filter: blur(10px); border-bottom: 1px solid rgba(255,255,255,0.1); box-shadow: 0 2px 20px rgba(0,0,0,0.1); transition: all 0.4s ease;">
+  <div class="container-fluid px-3 px-md-5">
+    <a class="navbar-brand d-flex align-items-center" href="/products" style="font-weight: 600; letter-spacing: 0.5px; transition: all 0.3s ease; font-size: 1.3rem;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+      <div style="width: 35px; height: 35px; background: rgba(255,255,255,0.2); border-radius: 8px; display: flex; align-items: center; justify-content: center; margin-right: 12px; backdrop-filter: blur(5px); transition: all 0.3s ease;">
+        <i class="fas fa-shopping-basket" style="font-size: 1.2rem; color: white;"></i>
+      </div>
+      <span class="d-none d-sm-inline">BargainBay</span>
+      <span class="d-inline d-sm-none">BargainBay</span>
+    </a>
+    
+    <button class="navbar-toggler border-0 p-2" type="button" data-bs-toggle="collapse" data-bs-target="#navbarTogglerDemo02" aria-controls="navbarTogglerDemo02" aria-expanded="false" aria-label="Toggle navigation" style="box-shadow: none; background: rgba(255,255,255,0.1); border-radius: 6px; transition: all 0.3s ease;" onmouseover="this.style.background='rgba(255,255,255,0.2)'" onmouseout="this.style.background='rgba(255,255,255,0.1)'">
       <span class="navbar-toggler-icon"></span>
     </button>
+    
     <div class="collapse navbar-collapse" id="navbarTogglerDemo02">
       <ul class="navbar-nav me-auto mb-2 mb-lg-0">
         <li class="nav-item">
-          <a class="nav-link" aria-current="page" href="/">Home</a>
+          <a class="nav-link px-3 py-2" aria-current="page" href="/" style="font-weight: 500; transition: all 0.3s ease; border-radius: 6px; margin: 0 2px;" onmouseover="this.style.background='rgba(255,255,255,0.1)'; this.style.transform='translateY(-1px)'" onmouseout="this.style.background='transparent'; this.style.transform='translateY(0)'">Home</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="/products">Products</a>
+          <a class="nav-link px-3 py-2" href="/products" style="font-weight: 500; transition: all 0.3s ease; border-radius: 6px; margin: 0 2px;" onmouseover="this.style.background='rgba(255,255,255,0.1)'; this.style.transform='translateY(-1px)'" onmouseout="this.style.background='transparent'; this.style.transform='translateY(0)'">Products</a>
         </li>
         <%if(currentUser && currentUser.role === 'seller'){%>
         <li class="nav-item">
-          <a class="nav-link" href="/products/new" tabindex="-1" aria-disabled="true">New</a>
+          <a class="nav-link px-3 py-2" href="/products/new" style="font-weight: 500; transition: all 0.3s ease; border-radius: 6px; margin: 0 2px;" onmouseover="this.style.background='rgba(255,255,255,0.1)'; this.style.transform='translateY(-1px)'" onmouseout="this.style.background='transparent'; this.style.transform='translateY(0)'">New</a>
         </li>
         <%}%>
       </ul>
-      <div class="navbar-nav ml-auto">
-
-        <%if(!currentUser){%>
-          <a href="/login" class="nav-link">Login</a> 
-        <%} else{%>
-          <a href="#" class="nav-link text-capitalize">Hello <%=currentUser.username%></i> 
-            <a href="/user/cart" class="nav-link"><i class="fas fa-shopping-cart"></i> 
-            <sup><span class="badge bg-danger"><%=currentUser.cart.length%></span></sup> 
-          </a>
-          <a href="/logout" class="nav-link">Logout</a>
-        <%}%>
-
-              
-      </div>
       
+      <div class="navbar-nav ms-auto d-flex align-items-center flex-row flex-lg-row gap-4">
+        <%if(!currentUser){%>
+          <a href="/login" class="nav-link me-2" style="background: rgba(255,255,255,0.15); padding: 8px 20px; border-radius: 20px; font-weight: 500; transition: all 0.3s ease; backdrop-filter: blur(5px); white-space: nowrap;" onmouseover="this.style.background='rgba(255,255,255,0.25)'; this.style.transform='translateY(-2px)'" onmouseout="this.style.background='rgba(255,255,255,0.15)'; this.style.transform='translateY(0)'">Login</a> 
+        <%} else{%>
+          <span class="nav-link text-capitalize me-2 d-none d-md-inline" style="color: rgba(255,255,255,0.9); font-weight: 500; white-space: nowrap;">Hello <%=currentUser.username%></span>
+          
+          <a href="/user/cart" class="nav-link position-relative me-2" style="background: rgba(255,255,255,0.1); padding: 8px 12px; border-radius: 50%; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; transition: all 0.3s ease; backdrop-filter: blur(5px);" onmouseover="this.style.background='rgba(255,255,255,0.2)'; this.style.transform='scale(1.1)'" onmouseout="this.style.background='rgba(255,255,255,0.1)'; this.style.transform='scale(1)'">
+            <i class="fas fa-shopping-cart" style="font-size: 1rem;"></i>
+            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill" style="background: linear-gradient(45deg, #ff6b6b, #ff8e8e); font-size: 0.7rem; min-width: 18px; height: 18px; display: flex; align-items: center; justify-content: center;"><%=currentUser.cart.length%></span>
+          </a>
+          
+          <a href="/logout" class="nav-link" style="background: rgba(255,107,107,0.2); padding: 8px 16px; border-radius: 16px; font-weight: 500; transition: all 0.3s ease; backdrop-filter: blur(5px); border: 1px solid rgba(255,107,107,0.3); white-space: nowrap;" onmouseover="this.style.background='rgba(255,107,107,0.3)'; this.style.transform='translateY(-1px)'" onmouseout="this.style.background='rgba(255,107,107,0.2)'; this.style.transform='translateY(0)'">Logout</a>
+        <%}%>
+      </div>
     </div>
   </div>
 </nav>
+
+<style>
+@keyframes wave {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+@keyframes waveFlow {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+#dynamicNavbar {
+  background: linear-gradient(135deg, #1e3c72 0%, #2a5298 25%, #0f4c75 50%, #3282b8 75%, #1e3c72 100%);
+  background-size: 400% 400%;
+  animation: wave 8s ease-in-out infinite;
+  position: relative;
+  overflow: hidden;
+}
+
+#dynamicNavbar::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+  animation: waveFlow 3s linear infinite;
+  pointer-events: none;
+}
+
+#dynamicNavbar::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: 
+    radial-gradient(circle at 20% 80%, rgba(76, 172, 254, 0.3) 0%, transparent 50%),
+    radial-gradient(circle at 80% 20%, rgba(0, 242, 254, 0.3) 0%, transparent 50%);
+  animation: wave 12s ease-in-out infinite reverse;
+  pointer-events: none;
+}
+</style>
+
+<script>
+// Enhanced scroll effects with blue wave theme
+const navbar = document.getElementById('dynamicNavbar');
+let scrollTimeout;
+
+// Change blur and wave intensity on scroll
+window.addEventListener('scroll', () => {
+  const scrollY = window.scrollY;
+  
+  // Clear existing timeout
+  clearTimeout(scrollTimeout);
+  
+  // Enhance blur effect on scroll
+  if (scrollY > 50) {
+    navbar.style.backdropFilter = 'blur(20px)';
+    navbar.style.boxShadow = '0 4px 30px rgba(30, 60, 114, 0.3)';
+    // Speed up wave animation on scroll
+    navbar.style.animationDuration = '4s';
+  } else {
+    navbar.style.backdropFilter = 'blur(10px)';
+    navbar.style.boxShadow = '0 2px 20px rgba(0,0,0,0.1)';
+    // Normal wave speed
+    navbar.style.animationDuration = '8s';
+  }
+  
+  // Reset animation speed after scrolling stops
+  scrollTimeout = setTimeout(() => {
+    navbar.style.animationDuration = '8s';
+  }, 150);
+});
+
+// Smooth navbar collapse on mobile
+const navbarToggler = document.querySelector('.navbar-toggler');
+const navbarCollapse = document.querySelector('.navbar-collapse');
+
+if (navbarToggler && navbarCollapse) {
+  navbarToggler.addEventListener('click', () => {
+    navbarCollapse.style.transition = 'all 0.3s ease';
+  });
+}
+
+// Add hover effect to navbar brand
+const navbarBrand = document.querySelector('.navbar-brand');
+if (navbarBrand) {
+  navbarBrand.addEventListener('mouseenter', () => {
+    navbarBrand.style.transform = 'scale(1.05)';
+  });
+  navbarBrand.addEventListener('mouseleave', () => {
+    navbarBrand.style.transform = 'scale(1)';
+  });
+}
+
+// Add wave ripple effect on navbar click
+navbar.addEventListener('click', (e) => {
+  const ripple = document.createElement('div');
+  const rect = navbar.getBoundingClientRect();
+  const size = 60;
+  const x = e.clientX - rect.left - size / 2;
+  const y = e.clientY - rect.top - size / 2;
+  
+  ripple.style.cssText = `
+    position: absolute;
+    width: ${size}px;
+    height: ${size}px;
+    background: radial-gradient(circle, rgba(255,255,255,0.3) 0%, transparent 70%);
+    border-radius: 50%;
+    transform: scale(0);
+    animation: ripple 0.6s linear;
+    left: ${x}px;
+    top: ${y}px;
+    pointer-events: none;
+    z-index: 1000;
+  `;
+  
+  navbar.style.position = 'relative';
+  navbar.appendChild(ripple);
+  
+  // Create ripple animation
+  const style = document.createElement('style');
+  style.textContent = `
+    @keyframes ripple {
+      to {
+        transform: scale(4);
+        opacity: 0;
+      }
+    }
+  `;
+  document.head.appendChild(style);
+  
+  setTimeout(() => {
+    ripple.remove();
+    style.remove();
+  }, 600);
+});
+</script>

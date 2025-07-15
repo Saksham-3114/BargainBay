@@ -1,69 +1,231 @@
 <% layout('layouts/boilerplate') -%>
 
-<section class="container">
-    
-    <%- include('../partials/flash')  %> 
+<section class="container py-5">
+  <%- include('../partials/flash') %>
 
-    <div class="row">
-        <div class="col-lg-6">
-          
-            <div class="card shadow-sm mx-auto" style="width: 22rem;">
-                <img src="<%=product.img%>" class="card-img-top" alt="item image">
-                <div class="card-body">
-                <h5 class="card-title"><%= product.name %> </h5>
-                <p class="card-text"><%= product.desc %></p>
-                <h5 class="card-title">$ <%= product.price %> </h5>
-                <a href="#" class="btn btn-success btn-sm">Buy</a>
-                <form class="d-inline-block" action="/user/<%=product._id%>/add" method="POST">
-                    <button>Add To Cart</button>
-                </form>
-                <%if(currentUser && currentUser.role === 'seller'){%>
-                    <a href="/products/<%=product._id%>/edit" class="btn btn-info btn-sm">Edit</a>
-                    <form class="d-inline-block" action="/products/<%=product._id%>?_method=DELETE" method="POST">
-                        <button class="btn btn-sm btn-danger">Delete</button>
-                    </form>
-                <%}%>
-                </div>
-            </div>
+  <div class="row gx-5 gy-4">
+    <!-- Left: Image & Seller Actions -->
+    <div class="col-lg-6">
+      <div class="rounded-4 overflow-hidden shadow-sm">
+        <img src="<%= product.img %>" alt="<%= product.name %>" class="w-100" style="max-height: 540px; object-fit: cover;">
+      </div>
+
+      <% if (currentUser && currentUser.role === 'seller') { %>
+        <div class="d-flex gap-2 mt-3 mb-4">
+          <a href="/products/<%= product._id %>/edit" class="btn btn-outline-primary btn-sm">Edit</a>
+          <form action="/products/<%= product._id %>?_method=DELETE" method="POST" onsubmit="return confirm('Delete this product?')">
+            <button class="btn btn-outline-danger btn-sm">Delete</button>
+          </form>
         </div>
-        <div class="col-lg-4 reviews-section mx-auto my-2">
-            <h1 class="display-6">Leave Your Review</h1>
-            
-            <form action="/products/<%=product._id%>/review" method="POST">
-                <div>
-                    <fieldset class="starability-basic">
-                        <input type="radio" id="no-rate" class="input-no-rate" name="rating" value="0" checked aria-label="No rating." />
-                        <input type="radio" id="first-rate1" name="rating" value="1" />
-                        <label for="first-rate1" title="Terrible">1 star</label>
-                        <input type="radio" id="first-rate2" name="rating" value="2" />
-                        <label for="first-rate2" title="Not good">2 stars</label>
-                        <input type="radio" id="first-rate3" name="rating" value="3" />
-                        <label for="first-rate3" title="Average">3 stars</label>
-                        <input type="radio" id="first-rate4" name="rating" value="4" />
-                        <label for="first-rate4" title="Very good">4 stars</label>
-                        <input type="radio" id="first-rate5" name="rating" value="5" />
-                        <label for="first-rate5" title="Amazing">5 stars</label>
-                    </fieldset>
+      <% } %>
+
+      <% if (product.reviews.length) { %>
+          <ul class="list-unstyled">
+            <% for (const r of product.reviews) { %>
+              <li class="border-start border-3 border-primary ps-3 mb-3">
+                <div class="d-flex justify-content-between">
+                  <span class="fw-semibold small"><%= r.author?.username || 'User' %></span>
+                  <span class="text-warning small">⭐ <%= r.rating %></span>
                 </div>
-                <div class="mb-3">
-                    <label class="form-label" for="desc">Description</label>
-                    <textarea class="form-control" name="comment" id="desc" rows="3"></textarea>
-                </div>
-                <button class="btn btn-success btn-sm">Submit</button>
-            </form>
-            <div class="my-3">
-                <%for(let review of product.reviews){%>
-                    <div class="card mb-3">
-                        <div class="card-body">
-                            <p class="starability-result" data-rating="<%=review.rating%>">
-                                Rated: <%=review.rating%> stars
-                            </p>
-                            <p class="card-text"><%-review.comment%></p>
-                            <button class="btn btn-danger btn-sm">Delete</button>
-                        </div>
-                    </div>
-                <%}%>
-            </div>
-        </div>
+                <p class="mb-0 text-muted"><%- r.comment %></p>
+              </li>
+            <% } %>
+          </ul>
+        <% } else { %>
+          <p class="text-muted small">No reviews yet. Be the first!</p>
+        <% } %>
     </div>
+
+    <!-- Right: Info ‑ Purchase ‑ Reviews ‑ Inline Chat -->
+    <div class="col-lg-6">
+      <h1 class="fw-bold mb-2"><%= product.name %></h1>
+      <p class="text-muted mb-3"><%= product.desc %></p>
+
+      <div class="d-flex align-items-center mb-3 gap-3">
+        <span class="fw-bold fs-3 text-dark">$<%= product.price %></span>
+        <span class="badge bg-warning-subtle text-warning-emphasis">50% OFF</span>
+      </div>
+
+      <div class="d-flex gap-2 mb-4">
+        <form action="/user/<%= product._id %>/add" method="POST">
+          <button class="btn btn-primary">Add to Cart</button>
+        </form>
+        <a href="#" class="btn btn-outline-success">Buy Now</a>
+      </div>
+
+      <!-- ===== Inline Chatbot ===== -->
+      <section class="card shadow-sm mt-4 mb-4">
+        <div class="card-header bg-light">
+          <h6 class="mb-0 fw-semibold">Ask about <%= product.name %></h6>
+        </div>
+
+        <!-- Conversation window -->
+        <div id="chatWindow" class="card-body p-3" style="min-height: 240px; max-height: 320px; overflow-y: auto;">
+          <div class="message-container d-flex mb-2">
+            <div class="bot-msg bg-light text-dark small px-3 py-2 rounded-3 shadow-sm">Hi! Having doubts about <strong><%= product.name %></strong>? What would you like to know?</div>
+          </div>
+          
+          <!-- Typing indicator -->
+          <div id="typingIndicator" class="typing-indicator">
+            <div class="bot-msg bg-light text-dark small px-3 py-2 rounded-3 shadow-sm d-flex align-items-center">
+              <div class="typing-dot"></div>
+              <div class="typing-dot"></div>
+              <div class="typing-dot"></div>
+              <span class="ms-2">Typing...</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Input bar -->
+        <div class="card-footer bg-white">
+          <form id="chatForm" class="d-flex gap-2">
+            <input id="chatInput" type="text" class="form-control form-control-sm" placeholder="Type your question…" maxlength="120" required>
+            <button type="submit" class="btn btn-sm btn-primary px-3" id="sendBtn">➤</button>
+          </form>
+        </div>
+      </section>
+      <!-- ===== End Inline Chatbot ===== -->
+
+      <!-- Reviews -->
+      <section class="mb-4">
+        <h2 class="h5 mb-3">Reviews</h2>
+
+        <!-- New review form -->
+        <form action="/products/<%= product._id %>/review" method="POST" class="mb-4">
+          <fieldset class="starability-basic mb-2">
+            <input type="radio" id="no-rate" name="rating" value="0" checked>
+            <input type="radio" id="rate1" name="rating" value="1"><label for="rate1" title="Terrible">1</label>
+            <input type="radio" id="rate2" name="rating" value="2"><label for="rate2" title="Not good">2</label>
+            <input type="radio" id="rate3" name="rating" value="3"><label for="rate3" title="Average">3</label>
+            <input type="radio" id="rate4" name="rating" value="4"><label for="rate4" title="Very good">4</label>
+            <input type="radio" id="rate5" name="rating" value="5"><label for="rate5" title="Amazing">5</label>
+          </fieldset>
+          <textarea class="form-control mb-2" name="comment" rows="2" placeholder="Share your thoughts…" required></textarea>
+          <button class="btn btn-sm btn-outline-primary">Post Review</button>
+        </form>
+
+        <!-- Existing reviews -->
+        
+      </section>
+
+    </div>
+  </div>
 </section>
+
+<!-- Star-rating plugin CSS -->
+<link rel="stylesheet" href="/css/starability-minimal.css">
+
+
+
+<!-- Chatbot JavaScript -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const chatForm = document.getElementById('chatForm');
+  const chatInput = document.getElementById('chatInput');
+  const chatWindow = document.getElementById('chatWindow');
+  const sendBtn = document.getElementById('sendBtn');
+  const typingIndicator = document.getElementById('typingIndicator');
+  
+  // Product ID from EJS
+  const productId = '<%= product._id %>';
+  
+  // Handle form submission
+  chatForm.addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    const message = chatInput.value.trim();
+    if (!message) return;
+    
+    // Add user message to chat
+    addMessage(message, 'user');
+    
+    // Clear input and disable send button
+    chatInput.value = '';
+    sendBtn.disabled = true;
+    
+    // Show typing indicator
+    showTypingIndicator();
+    
+    try {
+      // Send request to chatbot API
+      const response = await fetch(`/products/${productId}/chatbot`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ message: message })
+      });
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      
+      const data = await response.json();
+      
+      // Hide typing indicator
+      hideTypingIndicator();
+      
+      // Add bot response to chat
+      addMessage(data.response || 'Sorry, I couldn\'t process your request.', 'bot');
+      
+    } catch (error) {
+      console.error('Error:', error);
+      hideTypingIndicator();
+      addMessage('Sorry, there was an error processing your request. Please try again.', 'bot', true);
+    } finally {
+      // Re-enable send button
+      sendBtn.disabled = false;
+      chatInput.focus();
+    }
+  });
+  
+  // Add message to chat window
+  function addMessage(message, sender, isError = false) {
+        const messageDiv = document.createElement('div');
+        messageDiv.className = 'message-container d-flex mb-2';
+
+        if (sender === 'user') {
+            messageDiv.innerHTML = `
+                <div class="user-msg bg-primary text-white small px-3 py-2 rounded-3 shadow-sm ms-auto">
+                    ${escapeHtml(message)}
+                </div>
+            `;
+        } else {
+            const errorClass = isError ? 'error-msg' : 'bg-light text-dark';
+            messageDiv.innerHTML = `
+                <div class="bot-msg ${errorClass} small px-3 py-2 rounded-3 shadow-sm">
+                    ${message} </div>
+            `;
+        }
+
+        chatWindow.appendChild(messageDiv);
+        scrollToBottom();
+    }
+  
+  // Show typing indicator
+  function showTypingIndicator() {
+    typingIndicator.style.display = 'flex';
+    scrollToBottom();
+  }
+  
+  // Hide typing indicator
+  function hideTypingIndicator() {
+    typingIndicator.style.display = 'none';
+  }
+  
+  // Scroll to bottom of chat window
+  function scrollToBottom() {
+    chatWindow.scrollTop = chatWindow.scrollHeight;
+  }
+  
+  // Escape HTML to prevent XSS
+  function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+  }
+  
+  // Focus on input when page loads
+  chatInput.focus();
+});
+</script>

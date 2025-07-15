@@ -60,7 +60,7 @@ const isProductAuthor = async(req,res,next)=>{
     const product = await Product.findById(id);
     console.log(product.author);
     console.log(req.user);
-    if(!product.author.equals(req.user._id)){
+    if(product.author!=(req.user._id)){
         req.flash('error' , 'you donot have the permission to do that');
         return res.redirect(`/products/${id}`);
     }
