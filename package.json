@@ -7,7 +7,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "nodemon ./app.js"
   },
-  "author": "samarth vohra",
+  "author": "saksham singhal",
   "license": "ISC",
   "dependencies": {
     "@google/genai": "^1.9.0",
