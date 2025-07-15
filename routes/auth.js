@@ -2,20 +2,6 @@ const express = require('express');
 const router = express.Router();
 const User = require('../models/User');
 const passport = require('passport');
-// const passport = require('passport');
-// const { registerForm, registerNewUser, loginForm, loginUser,logoutUser } = require('../controllers/auth');
-
-// router.get('/fakeuser', async(req, res) => {
-    
-
-    // const user = {
-    //     email: 'samarth@gmail.com',
-    //     username:'samarth'
-    // }
-    // const newUser = await User.register(user, 'sam123');
-
-    // res.send(newUser);
-// });
 
 
 router.get('/register' , (req,res)=>{
